@@ -1,0 +1,97 @@
+winget install MSYS2.MSYS2
+
+
+
+start "C:\msys64\mingw64.exe"
+
+
+
+pacman -Syu --noconfirm
+
+pacman -Syu --noconfirm
+
+pacman -S --needed --noconfirm \
+  base-devel \
+  mingw-w64-x86_64-toolchain \
+  mingw-w64-x86_64-nasm \
+  mingw-w64-x86_64-pkgconf \
+  mingw-w64-x86_64-lame \
+  mingw-w64-x86_64-opus \
+  mingw-w64-x86_64-libvorbis \
+  mingw-w64-x86_64-speex
+
+which gcc
+which ld
+which mingw32-make
+
+
+
+cd /d/Stuff/DevFolder/AudioConverter/ffmpeg_source
+mkdir -p build-audio-shared
+cd build-audio-shared
+rm -rf ./*
+
+### LESS
+
+../configure \
+  --prefix=/d/Stuff/DevFolder/AudioConverter/ffmpeg_audio_build \
+  --enable-shared --disable-static \
+  --enable-gpl --enable-version3 \
+  --disable-programs --disable-doc --disable-debug \
+  --disable-avdevice --disable-avfilter --disable-swscale \
+  --enable-small \
+  --disable-encoders \
+  --enable-encoder=libmp3lame \
+  --enable-encoder=aac \
+  --enable-encoder=flac \
+  --enable-encoder=libvorbis \
+  --enable-encoder=libopus \
+  --enable-encoder=pcm_s16le \
+  --enable-encoder=pcm_s24le \
+  --enable-libmp3lame --enable-libopus --enable-libvorbis \
+  --enable-libspeex
+
+make -j32
+make install
+
+
+
+### MORE 
+
+../configure \
+  --prefix=/d/Stuff/DevFolder/AudioConverter/ffmpeg_audio_build \
+  --enable-shared \
+  --disable-static \
+  --enable-gpl \
+  --enable-version3 \
+  --disable-doc \
+  --disable-debug \
+  --disable-avdevice \
+  --disable-avfilter \
+  --disable-swscale \
+  --enable-lto \
+  --disable-network \
+  --disable-encoders \
+  --enable-encoder=libmp3lame \
+  --enable-encoder=aac \
+  --enable-encoder=flac \
+  --enable-encoder=libvorbis \
+  --enable-encoder=libopus \
+  --enable-encoder=pcm_s16le \
+  --enable-encoder=pcm_s24le \
+  --disable-muxers \
+  --enable-muxer=mp3 \
+  --enable-muxer=adts \
+  --enable-muxer=flac \
+  --enable-muxer=wav \
+  --enable-muxer=ogg \
+  --enable-muxer=opus \
+  --enable-muxer=mp4 \
+  --enable-muxer=ipod \
+  --enable-libmp3lame \
+  --enable-libopus \
+  --enable-libvorbis \
+  --enable-libspeex
+
+make -j32
+make install

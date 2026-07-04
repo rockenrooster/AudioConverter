@@ -1,0 +1,183 @@
+./configure --disable-static --enable-shared --enable-gpl --enable-version3 --disable-w32threads --enable-avisynth --enable-bzlib --enable-fontconfig --enable-frei0r --enable-gnutls --enable-iconv --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libdcadec --enable-libfreetype --enable-libgme --enable-libgsm --enable-libilbc --enable-libmodplug --enable-libmfx --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-libopus --enable-librtmp --enable-libschroedinger --enable-libsoxr --enable-libspeex --enable-libtheora --enable-libtwolame --enable-libvidstab --enable-libvo-aacenc --enable-libvo-amrwbenc --enable-libvorbis --enable-libvpx --enable-libwavpack --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxavs --enable-libxvid --enable-lzma --enable-decklink --enable-zlib
+
+./configure --disable-everything --disable-network --enable-small --enable-decoder=aac,ac3,opus,vorbis,mp3,flac,wma,ogg,wav --enable-encoder=aac*,ac3*,vorbis*,mp3*,flac*,wma*,ogg*,wav* --enable-protocol=file,rtmp,pipe,hls --enable-parser=* --enable-demuxer=* --enable-muxer=*
+
+./configure --disable-network --enable-small --enable-decoder=aac,ac3,opus,vorbis,mp3,flac,wma,ogg
+
+
+
+
+-i Artemis.flac -ac 2 -b:a 192000 -ar 48000 Artemis.mp3 -y
+
+
+cd ~/ffmpeg_sources && \
+wget -O ffmpeg-snapshot.tar.bz2 https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2 && \
+tar xjvf ffmpeg-snapshot.tar.bz2 && \
+cd ffmpeg && \
+PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./configure \
+  --prefix="$HOME/ffmpeg_build" \
+  --pkg-config-flags="--static" \
+  --extra-cflags="-I$HOME/ffmpeg_build/include" \
+  --extra-ldflags="-L$HOME/ffmpeg_build/lib" \
+  --extra-libs="-lpthread -lm" \
+  --bindir="$HOME/bin" \
+  --enable-gpl \
+  --enable-libass \
+  --enable-libfdk-aac \
+  --enable-libfreetype \
+  --enable-libmp3lame \
+  --enable-libvorbis \
+  --enable-nonfree && \
+PATH="$HOME/bin:$PATH" make && \
+make install && \
+hash -r
+
+
+##Works## Used last 2/28/2025 #
+
+./configure \
+  --disable-pthreads \
+  --disable-w32threads \
+  --disable-os2threads \
+  --disable-alsa \
+  --disable-appkit \
+  --disable-avfoundation \
+  --disable-bzlib \
+  --disable-coreimage \
+  --disable-iconv \
+  --disable-libxcb \
+  --disable-libxcb-shm \
+  --disable-libxcb-xfixes \
+  --disable-libxcb-shape \
+  --disable-lzma \
+  --disable-sndio \
+  --disable-sdl2 \
+  --disable-xlib \
+  --disable-zlib \
+  --disable-amf \
+  --disable-audiotoolbox \
+  --disable-cuda \
+  --disable-cuvid \
+  --disable-d3d11va \
+  --disable-dxva2 \
+  --disable-nvdec \
+  --disable-nvenc \
+  --disable-v4l2-m2m \
+  --disable-vaapi \
+  --disable-vdpau \
+  --disable-videotoolbox \
+  --disable-network \
+  --disable-avdevice \
+  --disable-swscale \
+  --disable-postproc \
+  --disable-doc \
+  --disable-runtime-cpudetect \
+  --enable-pthreads \
+  --enable-gpl \
+  --enable-version3 \
+  --enable-avcodec \
+  --enable-avformat \
+  --enable-swresample \
+  --enable-ffmpeg \
+  --enable-small
+make -j24
+
+##Works##
+./configure \
+  --disable-everything \
+  --enable-gpl \
+  --enable-version3 \
+  --enable-avcodec \
+  --enable-avformat \
+  --enable-swresample \
+  --enable-ffmpeg \
+  --enable-nonfree \
+  --enable-encoder=* \
+  --enable-decoder=* \
+  --enable-muxer=* \
+  --enable-demuxer=* \
+  --enable-parser=* \
+  --enable-bsf=* \
+  --enable-protocol=* \
+  --enable-indev=* \
+  --enable-outdev=* \
+  --enable-filter=* \
+  --enable-mediafoundation \
+  --enable-small
+
+make -j24
+
+
+
+##Works## 5.4MB
+./configure \
+  --disable-everything \
+  --enable-gpl \
+  --enable-version3 \
+  --enable-avcodec \
+  --enable-avformat \
+  --enable-swresample \
+  --enable-ffmpeg \
+  --enable-nonfree \
+  --enable-encoder=aac*,ac3*,vorbis*,mp3*,flac*,wma*,ogg*,i*,mov* \
+  --enable-decoder=aac*,ac3*,vorbis*,mp3*,flac*,wma*,ogg*,i*,mov* \
+  --enable-muxer=aac*,ac3*,vorbis*,mp3*,flac*,wma*,ogg*,i*,mov* \
+  --enable-demuxer=aac*,ac3*,vorbis*,mp3*,flac*,wma*,ogg*,i*,mov* \
+  --enable-parser=aac*,ac3*,vorbis*,mp3*,flac*,wma*,ogg*,i*,mov* \
+  --enable-protocol=file \
+  --enable-filter=aresample \
+  --enable-mediafoundation \
+  --enable-small
+  
+  
+  ##Works## v8 3675 KB
+./configure \
+  --disable-everything \
+  --disable-ffplay \
+  --disable-ffprobe \
+  --enable-gpl \
+  --enable-version3 \
+  --enable-encoder=aac*,ac3*,vorbis*,mp3*,flac*,wma*,ogg*,ipod*,mov*,asf* \
+  --enable-decoder=aac*,ac3*,vorbis*,mp3*,flac*,wma*,ogg*,ipod*,mov*,asf* \
+  --enable-muxer=aac*,ac3*,vorbis*,mp3*,flac*,wma*,ogg*,ipod*,mov*,adts,asf* \
+  --enable-demuxer=aac*,ac3*,vorbis*,mp3*,flac*,wma*,ogg*,ipod*,mov*,adts,asf* \
+  --enable-parser=aac*,ac3*,vorbis*,mp3*,flac*,wma*,ogg*,ipod*,mov*,asf* \
+  --enable-protocol=file \
+  --enable-bsf=adtstoasc \
+  --enable-filter=aresample \
+  --enable-small
+  
+  make -j24
+
+
+  ##Pending## nope
+./configure \
+  --disable-all \
+  --enable-gpl \
+  --enable-version3 \
+  --enable-avcodec \
+  --enable-avformat \
+  --enable-swresample \
+  --enable-ffmpeg \
+  --enable-programs \
+  --enable-nonfree \
+  --enable-encoder=aac*,ac3*,vorbis*,mp3*,flac*,wma*,ogg*,ipod*,mov* \
+  --enable-decoder=aac*,ac3*,vorbis*,mp3*,flac*,wma*,ogg*,ipod*,mov* \
+  --enable-muxer=aac*,ac3*,vorbis*,mp3*,flac*,wma*,ogg*,ipod*,mov*,adts \
+  --enable-demuxer=aac*,ac3*,vorbis*,mp3*,flac*,wma*,ogg*,ipod*,mov*,adts \
+  --enable-parser=aac*,ac3*,vorbis*,mp3*,flac*,wma*,ogg*,ipod*,mov* \
+  --enable-protocol=file \
+  --enable-bsf=adtstoasc \
+  --enable-filter=aresample \
+  --enable-mediafoundation \
+  --enable-small
+
+./configure --disable-pthreads --disable-w32threads --disable-os2threads --disable-alsa --disable-appkit --disable-avfoundation --disable-bzlib --disable-coreimage --disable-iconv --disable-libxcb --disable-libxcb-shm --disable-libxcb-xfixes --disable-libxcb-shape --disable-lzma --disable-sndio --disable-sdl2 --disable-xlib --disable-zlib --disable-amf --disable-audiotoolbox --disable-cuda --disable-cuvid --disable-d3d11va --disable-dxva2 --disable-nvdec --disable-nvenc --disable-v4l2-m2m --disable-vaapi --disable-vdpau --disable-videotoolbox --disable-network --disable-avdevice --disable-swscale --disable-postproc --disable-doc --disable-runtime-cpudetect --enable-pthreads --enable-gpl --enable-version3 --enable-avcodec --enable-avformat --enable-swresample --enable-ffmpeg --enable-small
+
+
+
+
+
+
+
+
