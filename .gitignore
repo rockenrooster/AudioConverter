@@ -5,6 +5,9 @@ TestResults/
 artifacts/
 plans/
 .audio-converter/
+/release.ps1
+/info
+/info/
 
 *.user
 *.suo

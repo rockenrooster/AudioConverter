@@ -27,7 +27,7 @@ jobs:
             throw "Missing AUDIO_CONVERTER_UPDATE_PRIVATE_KEY_PEM repository secret."
           }
 
-          .\release.ps1 -PackageOnly
+          .\scripts\package-release.ps1
           $exe = Resolve-Path .\artifacts\publish\win-x64\AudioConverter.exe
           $version = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($exe).FileVersion
           $expectedTag = "v$version"
