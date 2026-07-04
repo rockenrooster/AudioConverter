@@ -7,7 +7,7 @@ internal static class OutputPresetCatalog
     private static readonly OutputPreset[] Presets =
     {
         new("mp3", "MP3", "mp3", AVCodecID.AV_CODEC_ID_MP3, "mp3"),
-        new("aac", "AAC ADTS", "aac", AVCodecID.AV_CODEC_ID_AAC, "adts"),
+        new("aac", "AAC", "m4a", AVCodecID.AV_CODEC_ID_AAC, "ipod"),
         new("flac", "FLAC", "flac", AVCodecID.AV_CODEC_ID_FLAC, "flac", SupportsBitDepth: true),
         new("wav", "WAV PCM", "wav", AVCodecID.AV_CODEC_ID_PCM_S16LE, "wav", SupportsBitDepth: true),
         new("ogg", "Ogg Vorbis", "ogg", AVCodecID.AV_CODEC_ID_VORBIS, "ogg"),

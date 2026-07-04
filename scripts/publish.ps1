@@ -2,7 +2,8 @@ param(
   [string]$Configuration = "Release",
   [string]$RuntimeIdentifier = "win-x64",
   [switch]$SelfContained,
-  [bool]$SingleFile = $true
+  [bool]$SingleFile = $true,
+  [bool]$BumpBuildVersion = $true
 )
 
 $repoRoot = (Resolve-Path "$PSScriptRoot\..").Path
@@ -28,7 +29,8 @@ $args = @(
   "-o", $publishDir,
   "--self-contained", $SelfContained.IsPresent.ToString().ToLowerInvariant(),
   "/p:PublishSingleFile=$($SingleFile.ToString().ToLowerInvariant())",
-  "/p:IncludeNativeLibrariesForSelfExtract=true"
+  "/p:IncludeNativeLibrariesForSelfExtract=true",
+  "/p:BumpBuildVersion=$($BumpBuildVersion.ToString().ToLowerInvariant())"
 )
 
 dotnet @args

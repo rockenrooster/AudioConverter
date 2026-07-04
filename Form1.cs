@@ -23,9 +23,6 @@ namespace AudioConverter
         private readonly object _progressLock = new();
         private double _totalProgressWeight;
         private double _finishedProgressWeight;
-        private ComboBox? _comboBoxChannelMode;
-        private Label? _labelChannelMode;
-        private Button? _buttonAbout;
         private readonly GitHubUpdateService _updateService = new();
         private UpdateCheckResult? _updateResult;
         private static readonly int[] DefaultSampleRates = { 8000, 16000, 22050, 32000, 44100, 48000, 96000, 192000 };
@@ -102,8 +99,6 @@ namespace AudioConverter
                 Logger.LogInfo("Initializing UI controls");
                 AddRelativePathColumn();
                 AddStatusColumns();
-                AddChannelModeControls();
-                AddAboutButton();
                 InitializeUpdateButton();
 
                 // Initialize format combo box
@@ -139,6 +134,7 @@ namespace AudioConverter
                 comboBoxBitDepth.SelectedIndexChanged += (_, _) => SaveSettingsIfReady();
                 Logger.LogDebug("Bit depth combo box initialized");
 
+                comboBoxChannelMode.SelectedIndexChanged += (_, _) => SaveSettingsIfReady();
                 numericUpDownBitrate.ValueChanged += (_, _) => SaveSettingsIfReady();
                 numericUpDownThreads.ValueChanged += (_, _) => SaveSettingsIfReady();
                 checkBoxOutputFolder.CheckedChanged += (_, _) => SaveSettingsIfReady();
@@ -149,7 +145,7 @@ namespace AudioConverter
                 _isFirstLaunch = !AppSettings.HasSavedSettings;
                 LoadSettings();
 
-                
+
 
                 UpdateBitDepthVisibility();
                 UpdateSampleRateOptions();
@@ -302,7 +298,7 @@ namespace AudioConverter
 
         private AudioChannelMode GetSelectedChannelMode()
         {
-            return _comboBoxChannelMode?.SelectedItem?.ToString() switch
+            return comboBoxChannelMode.SelectedItem?.ToString() switch
             {
                 "Mono" => AudioChannelMode.Mono,
                 "Stereo" => AudioChannelMode.Stereo,
@@ -312,10 +308,7 @@ namespace AudioConverter
 
         private void SelectChannelMode(string value)
         {
-            if (_comboBoxChannelMode == null)
-                return;
-
-            _comboBoxChannelMode.SelectedItem = value switch
+            comboBoxChannelMode.SelectedItem = value switch
             {
                 nameof(AudioChannelMode.Mono) => "Mono",
                 nameof(AudioChannelMode.Stereo) => "Stereo",
@@ -465,50 +458,7 @@ namespace AudioConverter
             }
         }
 
-        private void AddChannelModeControls()
-        {
-            if (_comboBoxChannelMode != null)
-                return;
-
-            _labelChannelMode = new Label
-            {
-                Anchor = AnchorStyles.Bottom,
-                AutoSize = true,
-                Font = new Font("Segoe UI", 9F),
-                Location = new Point(145, 337),
-                Text = "Channels:"
-            };
-
-            _comboBoxChannelMode = new ComboBox
-            {
-                Anchor = AnchorStyles.Bottom,
-                DropDownStyle = ComboBoxStyle.DropDownList,
-                Location = new Point(214, 334),
-                Size = new Size(88, 23)
-            };
-            _comboBoxChannelMode.Items.AddRange(new object[] { "Original", "Mono", "Stereo" });
-            _comboBoxChannelMode.SelectedIndex = 0;
-            _comboBoxChannelMode.SelectedIndexChanged += (_, _) => SaveSettingsIfReady();
-
-            splitContainer1.Panel2.Controls.Add(_labelChannelMode);
-            splitContainer1.Panel2.Controls.Add(_comboBoxChannelMode);
-        }
-
-        private void AddAboutButton()
-        {
-            if (_buttonAbout != null)
-                return;
-
-            _buttonAbout = new Button
-            {
-                Anchor = AnchorStyles.Top | AnchorStyles.Right,
-                Location = new Point(204, 22),
-                Size = new Size(75, 23),
-                Text = "About"
-            };
-            _buttonAbout.Click += (_, _) => ShowAboutDialog();
-            splitContainer1.Panel2.Controls.Add(_buttonAbout);
-        }
+        private void buttonAbout_Click(object? sender, EventArgs e) => ShowAboutDialog();
 
         private void UpdateFileCount()
         {
@@ -642,6 +592,7 @@ namespace AudioConverter
 
                 string outputRoot = textBoxOutput.Text;
                 string formatLocal = comboBoxFormat.SelectedItem?.ToString() ?? "mp3";
+                var outputPreset = OutputPresetCatalog.Get(formatLocal);
                 bool outputFullPath = checkBoxOutputFolder.Checked;
                 var outputPathResolver = new OutputPathResolver();
                 var reservedOutputPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -649,7 +600,7 @@ namespace AudioConverter
                 int sampleRate = int.Parse(comboBoxSampleRate.SelectedItem?.ToString() ?? "44100");
                 bool useSourceSampleRate = checkBoxUseSourceSampleRate.Checked;
                 AudioChannelMode channelMode = GetSelectedChannelMode();
-                int bitDepth = OutputPresetCatalog.Get(formatLocal).SupportsBitDepth
+                int bitDepth = outputPreset.SupportsBitDepth
                     ? int.Parse(comboBoxBitDepth.SelectedItem?.ToString() ?? "16")
                     : 16;
                 int maxDegree = Decimal.ToInt32(numericUpDownThreads.Value) > 0
@@ -738,7 +689,7 @@ namespace AudioConverter
                                 row.inPath,
                                 row.relativePath,
                                 outputRoot,
-                                formatLocal,
+                                outputPreset.Extension,
                                 outputFullPath,
                                 ExistingFilePolicy.AutoRename,
                                 reservedOutputPaths));
@@ -1265,7 +1216,7 @@ namespace AudioConverter
             }
         }
 
-        
+
 
         private string ShowOptimizedSettingsDialog()
         {

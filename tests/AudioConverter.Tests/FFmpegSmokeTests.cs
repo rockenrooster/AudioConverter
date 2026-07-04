@@ -64,6 +64,10 @@ public sealed class FFmpegSmokeTests
 
         ConvertAudio(tagged, output, "m4a");
         Assert.True(HasM4aCovrAtom(output), "Converted M4A should keep cover art.");
+
+        string aacChoiceOutput = Path.Combine(dir, "out-aac-choice.m4a");
+        ConvertAudio(tagged, aacChoiceOutput, "aac");
+        Assert.True(HasM4aCovrAtom(aacChoiceOutput), "AAC choice should write M4A metadata correctly.");
     }
 
     private static bool HasNativeRuntime() =>

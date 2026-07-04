@@ -55,7 +55,7 @@
     </None>
   </ItemGroup>
 
-  <Target Name="BumpBuildVersion" AfterTargets="Build" Condition="'$(DesignTimeBuild)' != 'true'">
+  <Target Name="BumpBuildVersion" AfterTargets="Build" Condition="'$(DesignTimeBuild)' != 'true' and '$(BumpBuildVersion)' != 'false'">
     <PropertyGroup>
       <NextVersionRevision>$([MSBuild]::Add('$(VersionRevision)', '1'))</NextVersionRevision>
     </PropertyGroup>

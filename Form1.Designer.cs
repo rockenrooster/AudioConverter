@@ -1,4 +1,4 @@
-﻿namespace AudioConverter
+namespace AudioConverter
 {
     partial class Form1
     {
@@ -61,6 +61,9 @@
             comboBoxBitDepth = new ComboBox();
             labelBitDepth = new Label();
             labelMaxBitrate = new Label();
+            labelChannelMode = new Label();
+            comboBoxChannelMode = new ComboBox();
+            buttonAbout = new Button();
             clearListButton = new Button();
             processingProgress = new ProgressBar();
             tabControl.SuspendLayout();
@@ -386,7 +389,10 @@
             splitContainer1.Panel2.Controls.Add(checkBoxUseSourceSampleRate);
             splitContainer1.Panel2.Controls.Add(comboBoxBitDepth);
             splitContainer1.Panel2.Controls.Add(labelBitDepth);
+            splitContainer1.Panel2.Controls.Add(labelChannelMode);
+            splitContainer1.Panel2.Controls.Add(comboBoxChannelMode);
             splitContainer1.Panel2.Controls.Add(labelMaxBitrate);
+            splitContainer1.Panel2.Controls.Add(buttonAbout);
             splitContainer1.Panel2.Controls.Add(clearListButton);
             splitContainer1.Panel2.Controls.Add(buttonOpen);
             splitContainer1.Panel2.Controls.Add(labelDoubleClick);
@@ -610,16 +616,52 @@
             labelBitDepth.Size = new Size(59, 15);
             labelBitDepth.TabIndex = 27;
             labelBitDepth.Text = "Bit Depth:";
-            // 
+            //
+            // labelChannelMode
+            //
+            labelChannelMode.Anchor = AnchorStyles.Bottom;
+            labelChannelMode.AutoSize = true;
+            labelChannelMode.Font = new Font("Segoe UI", 9F);
+            labelChannelMode.Location = new Point(145, 337);
+            labelChannelMode.Margin = new Padding(4, 0, 4, 0);
+            labelChannelMode.Name = "labelChannelMode";
+            labelChannelMode.Size = new Size(58, 15);
+            labelChannelMode.TabIndex = 35;
+            labelChannelMode.Text = "Channels:";
+            //
+            // comboBoxChannelMode
+            //
+            comboBoxChannelMode.Anchor = AnchorStyles.Bottom;
+            comboBoxChannelMode.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBoxChannelMode.FormattingEnabled = true;
+            comboBoxChannelMode.Items.AddRange(new object[] { "Original", "Mono", "Stereo" });
+            comboBoxChannelMode.Location = new Point(204, 334);
+            comboBoxChannelMode.Margin = new Padding(4, 3, 4, 3);
+            comboBoxChannelMode.Name = "comboBoxChannelMode";
+            comboBoxChannelMode.Size = new Size(64, 23);
+            comboBoxChannelMode.TabIndex = 36;
+            //
             // labelMaxBitrate
-            // 
+            //
             labelMaxBitrate.Location = new Point(0, 0);
             labelMaxBitrate.Name = "labelMaxBitrate";
             labelMaxBitrate.Size = new Size(100, 23);
             labelMaxBitrate.TabIndex = 34;
-            // 
+            //
+            // buttonAbout
+            //
+            buttonAbout.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            buttonAbout.Location = new Point(197, 81);
+            buttonAbout.Margin = new Padding(4, 3, 4, 3);
+            buttonAbout.Name = "buttonAbout";
+            buttonAbout.Size = new Size(64, 26);
+            buttonAbout.TabIndex = 37;
+            buttonAbout.Text = "About";
+            buttonAbout.UseVisualStyleBackColor = true;
+            buttonAbout.Click += buttonAbout_Click;
+            //
             // clearListButton
-            // 
+            //
             clearListButton.Anchor = AnchorStyles.Top;
             clearListButton.Location = new Point(197, 51);
             clearListButton.Margin = new Padding(4, 3, 4, 3);
@@ -703,6 +745,9 @@
         private Label labelSampleRate;
         private ComboBox comboBoxBitDepth;
         private Label labelBitDepth;
+        private Label labelChannelMode;
+        private ComboBox comboBoxChannelMode;
+        private Button buttonAbout;
         private ProgressBar processingProgress;
         private Button clearListButton;
         private Label labelMaxBitrate;

@@ -1,0 +1,52 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    env:
+      AUDIO_CONVERTER_UPDATE_PRIVATE_KEY_PEM: ${{ secrets.AUDIO_CONVERTER_UPDATE_PRIVATE_KEY_PEM }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Package release assets
+        shell: pwsh
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:AUDIO_CONVERTER_UPDATE_PRIVATE_KEY_PEM)) {
+            throw "Missing AUDIO_CONVERTER_UPDATE_PRIVATE_KEY_PEM repository secret."
+          }
+
+          .\release.ps1 -PackageOnly
+          $exe = Resolve-Path .\artifacts\publish\win-x64\AudioConverter.exe
+          $version = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($exe).FileVersion
+          $expectedTag = "v$version"
+          if ($env:GITHUB_REF_NAME -ne $expectedTag) {
+            throw "Tag $env:GITHUB_REF_NAME does not match built version $expectedTag."
+          }
+
+      - name: Create GitHub release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = $env:GITHUB_REF_NAME
+          $assets = @(
+            "artifacts\publish\win-x64\AudioConverter.exe",
+            "artifacts\publish\win-x64\AudioConverter.exe.manifest.json",
+            "artifacts\publish\win-x64\AudioConverter.exe.manifest.sig",
+            "artifacts\publish\win-x64\LICENSES.md",
+            "artifacts\publish\win-x64\THIRD_PARTY_NOTICES.md"
+          )
+
+          gh release create $tag @assets --repo $env:GITHUB_REPOSITORY --title $tag --notes "AudioConverter $tag" --verify-tag

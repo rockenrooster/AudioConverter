@@ -1,6 +1,7 @@
 param(
   [switch]$InitSigningKey,
   [switch]$DryRun,
+  [switch]$PackageOnly,
   [string]$Repo = "rockenrooster/AudioConverter",
   [string]$Branch = "main",
   [string]$Configuration = "Release"
@@ -60,6 +61,22 @@ function Initialize-SigningKey {
   Write-Host "Signing key ready: $privateKeyPath"
 }
 
+function Get-PrivateKeyPem {
+  if (-not [string]::IsNullOrWhiteSpace($env:AUDIO_CONVERTER_UPDATE_PRIVATE_KEY_PEM)) {
+    return $env:AUDIO_CONVERTER_UPDATE_PRIVATE_KEY_PEM
+  }
+
+  if (-not [string]::IsNullOrWhiteSpace($env:UPDATE_PRIVATE_KEY_PEM)) {
+    return $env:UPDATE_PRIVATE_KEY_PEM
+  }
+
+  if (Test-Path -LiteralPath $privateKeyPath) {
+    return Get-Content -LiteralPath $privateKeyPath -Raw
+  }
+
+  throw "Missing private signing key. Run .\release.ps1 -InitSigningKey first, or set AUDIO_CONVERTER_UPDATE_PRIVATE_KEY_PEM."
+}
+
 function Get-GitHubRepoExists {
   & gh repo view $Repo *> $null
   return $LASTEXITCODE -eq 0
@@ -104,10 +121,6 @@ function Get-PublishedVersion {
 
 function Write-ManifestAndSignature {
   param([string]$Version)
-  if (-not (Test-Path -LiteralPath $privateKeyPath)) {
-    throw "Missing private signing key. Run .\release.ps1 -InitSigningKey first."
-  }
-
   $tag = "v$Version"
   $hash = (Get-FileHash -LiteralPath $exePath -Algorithm SHA256).Hash.ToLowerInvariant()
   $size = (Get-Item -LiteralPath $exePath).Length
@@ -127,8 +140,7 @@ function Write-ManifestAndSignature {
   [System.IO.File]::WriteAllText($manifestPath, $manifestJson, [System.Text.UTF8Encoding]::new($false))
 
   $rsa = [System.Security.Cryptography.RSA]::Create()
-  $privatePem = Get-Content -LiteralPath $privateKeyPath -Raw
-  $rsa.ImportFromPem($privatePem)
+  $rsa.ImportFromPem((Get-PrivateKeyPem))
   $manifestBytes = [System.IO.File]::ReadAllBytes($manifestPath)
   $signatureBytes = $rsa.SignData(
     $manifestBytes,
@@ -160,21 +172,29 @@ if ($InitSigningKey) {
 
 Push-Location $repoRoot
 try {
-  Test-Command git
-  Test-Command gh
-  Invoke-Checked gh @("auth", "status")
-  Ensure-GitHubRepo
-
-  & (Join-Path $repoRoot "build.ps1") -Configuration $Configuration
+  & (Join-Path $repoRoot "build.ps1") -Configuration $Configuration -BumpBuildVersion:$false
   if ($LASTEXITCODE -ne 0) {
     throw "build.ps1 failed with exit code $LASTEXITCODE"
   }
   $version = Get-PublishedVersion
   $tag = Write-ManifestAndSignature $version
+
+  if ($PackageOnly) {
+    if ($env:GITHUB_OUTPUT) {
+      Add-Content -LiteralPath $env:GITHUB_OUTPUT -Value "tag=$tag"
+    }
+    Write-Host "PACKAGE: release $tag is ready"
+    return
+  }
+
+  Test-Command git
+  Test-Command gh
+  Invoke-Checked gh @("auth", "status")
+  Ensure-GitHubRepo
   Assert-ReleaseDoesNotExist $tag
 
   if ($DryRun) {
-    Write-Host "DRY RUN: release $tag is ready"
+    Write-Host "DRY RUN: release $tag is ready for GitHub Actions"
     return
   }
 
@@ -187,17 +207,7 @@ try {
   Invoke-Checked git @("push", "-u", "origin", $Branch)
   Invoke-Checked git @("tag", $tag)
   Invoke-Checked git @("push", "origin", $tag)
-  Invoke-Checked gh @(
-    "release", "create", $tag,
-    $exePath,
-    $manifestPath,
-    $signaturePath,
-    (Join-Path $publishDir "LICENSES.md"),
-    (Join-Path $publishDir "THIRD_PARTY_NOTICES.md"),
-    "-R", $Repo,
-    "--title", $tag,
-    "--notes", "AudioConverter $tag"
-  )
+  Write-Host "Pushed $tag. GitHub Actions will build and publish the release."
 } finally {
   Pop-Location
 }

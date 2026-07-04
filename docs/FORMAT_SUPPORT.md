@@ -5,7 +5,7 @@ Visible output presets are capability-checked at startup:
 | Id | Output | Encoder | Muxer |
 | --- | --- | --- | --- |
 | `mp3` | MP3 | MP3 | mp3 |
-| `aac` | AAC ADTS | AAC | adts |
+| `aac` | AAC in M4A | AAC | ipod |
 | `flac` | FLAC | FLAC | flac |
 | `wav` | WAV PCM | PCM 16/24 | wav |
 | `ogg` | Ogg Vorbis | Vorbis | ogg |

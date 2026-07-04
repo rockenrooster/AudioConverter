@@ -24,16 +24,16 @@ Initialize the update signing key once:
 .\release.ps1 -InitSigningKey
 ```
 
-Validate a release without pushing, tagging, or publishing:
+Validate a release without pushing or tagging:
 
 ```powershell
 .\release.ps1 -DryRun
 ```
 
-Create the GitHub release:
+Push the release tag:
 
 ```powershell
 .\release.ps1
 ```
 
-The release script builds the app, signs the update manifest, commits and pushes pending changes, tags the version, and uploads the EXE plus manifest assets to GitHub Releases.
+The release script builds the app, signs the update manifest as a local check, commits and pushes pending changes, then pushes the version tag. GitHub Actions builds the tagged source, signs the manifest with the `AUDIO_CONVERTER_UPDATE_PRIVATE_KEY_PEM` repository secret, and uploads the EXE plus manifest assets to GitHub Releases.

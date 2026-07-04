@@ -1060,6 +1060,7 @@ namespace AudioConverter
         internal static bool SupportsAttachedPictures(string format)
         {
             return format.Equals("mp3", StringComparison.OrdinalIgnoreCase) ||
+                format.Equals("aac", StringComparison.OrdinalIgnoreCase) ||
                 format.Equals("m4a", StringComparison.OrdinalIgnoreCase) ||
                 format.Equals("flac", StringComparison.OrdinalIgnoreCase);
         }

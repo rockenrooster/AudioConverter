@@ -1,0 +1,22 @@
+* text=auto eol=crlf
+
+ffmpeg_source/** -text
+
+*.dll binary
+*.exe binary
+*.ico binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.zip binary
+*.7z binary
+*.mp3 binary
+*.m4a binary
+*.flac binary
+*.wav binary
+*.aac binary
+*.ogg binary
+*.opus binary
+*.mp4 binary
+*.mkv binary

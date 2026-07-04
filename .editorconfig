@@ -1,4 +1,11 @@
-﻿[*.cs]
+﻿root = true
+
+[*]
+end_of_line = crlf
+insert_final_newline = true
+charset = utf-8
+
+[*.cs]
 
 # Default severity for all analyzer diagnostics
 dotnet_analyzer_diagnostic.severity = warning
