@@ -31,6 +31,7 @@ namespace AudioConverter
 
         static Logger()
         {
+#if DEBUG
             // Clear log on startup
             try
             {
@@ -38,8 +39,10 @@ namespace AudioConverter
                     File.Delete(LogPath);
             }
             catch { }
+#endif
         }
 
+        [Conditional("DEBUG")]
         public static void Log(string message)
         {
             lock (_lock)
@@ -56,6 +59,7 @@ namespace AudioConverter
             }
         }
 
+        [Conditional("DEBUG")]
         public static void LogError(string message, Exception? ex = null)
         {
             Log($"ERROR: {message}");
@@ -72,8 +76,11 @@ namespace AudioConverter
             }
         }
 
+        [Conditional("DEBUG")]
         public static void LogInfo(string message) => Log($"INFO: {message}");
+        [Conditional("DEBUG")]
         public static void LogWarning(string message) => Log($"WARNING: {message}");
+        [Conditional("DEBUG")]
         public static void LogDebug(string message) => Log($"DEBUG: {message}");
 
         public static string GetLogPath() => LogPath;
